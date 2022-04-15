@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>English Alphabet Spell Out Loud Keyboard</title>
+    </head>
+    <body>
+        <h1>English Alphabet: Press to speak name of letter</h1>
+        <p>This application contains buttons the user can press. One button for each letter of the English alphabet. 
+            When a button is pressed,  the name of the letter is played as an audio file. 
+            This is the English alphabet letter names as pronounced in central Canada.
+        </p>
+        <p>
+            This works on modern web browsers, and you will need to have the sound on your device enabled.
+        </p>
+        <!-- Note to programmers: We use web components. They are defined in Javascript within this file. -->
+
+        <alphabet-keyboard alphabet="A B C D E F G H I J K L M N O P Q R S T U V W X Y Z">
+        </alphabet-keyboard>
+
+        <script>
+            class AudioButton extends HTMLElement {
+                constructor(buttonLabel) {
+                    super();
+                    let shadowDom = this.attachShadow({mode: 'open'});
+
+                    const myButtonTemplate = document.createElement("template");
+                    myButtonTemplate.innerHTML = `
+                        <style>
+                            button {
+                                font-size: 3em;
+                                margin: 0.4em;
+                                padding: 0.2em;
+                                border-radius: 0.3em;
+                                background-color: whitesmoke;
+                                border-color: gray;
+                                border-width: 0.12em;
+                            }
+                        </style>
+                        <audio id="${buttonLabel}Audio">
+                            <source src="audio/${buttonLabel}.ogg" type="audio/ogg">
+                            <source src="audio/${buttonLabel}.mp3" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+
+                        <button id="playLetterName">
+                            ${buttonLabel}
+                        </button>
+                    `;
+
+
+                    shadowDom.appendChild(myButtonTemplate.content.cloneNode(true));
+                }
+
+                playSound() {
+                    this.shadowRoot.querySelector("audio").play();
+                }
+                
+                connectedCallback() {
+                    const soundButton = this.shadowRoot.querySelector("#playLetterName");
+                    soundButton.addEventListener('click', () => this.playSound());
+                }
+
+                disconnectedCallBack() {
+                    const soundButton = this.shadowRoot.querySelector("#playLetterName");
+                    soundButton.removeEventListener();
+                }
+
+            }
+            window.customElements.define("audio-button", AudioButton);
+
+
+
+            class AlphabetKeyboard extends HTMLElement {
+                constructor() {
+                    super();
+                    let shadowDom = this.attachShadow({mode: 'open'});
+
+                    const myButtonTemplate = document.createElement("template");
+                    myButtonTemplate.innerHTML = `
+                        <style>
+                        </style>
+                        <div id="lettersPanel" dir="ltr">
+                        </div>
+                    `;
+
+
+                    shadowDom.appendChild(myButtonTemplate.content.cloneNode(true));
+
+
+                    const alphabetFull = this.getAttribute("alphabet");
+                    const letters = alphabetFull.split(" "); // split on the space character
+
+                    const lettersPanel = shadowDom.querySelector("#lettersPanel");
+
+                    letters.forEach(letter =>
+                        lettersPanel.appendChild(new MyButton(letter)));
+                }
+            }
+            window.customElements.define('alphabet-keyboard', AlphabetKeyboard);
+        </script>
+    </body>
+    <!-- Created by Elsanussi Mneina (he) on April 14th and April 15th. You can contact me (Elsanussi Mneina) at grassdewmorning@gmail.com, mentioning this page).
+
+    
+    This single page web application for speaking English letter names was first released to the public on April 15th, 2022 on GitHub under an MIT license.
+    https://github.com/elsanussi-s-mneina/hebrew-alphabet-syllabic-keyboard-html-js/
+    Here is the LICENSE for this web application:
+    MIT License
+    Copyright (c) 2022 Elsanussi Mneina
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+    -->
+
+</html>
